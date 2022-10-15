@@ -8,12 +8,7 @@ import mjolnir from '../resources/img/mjolnir.png';
 
 // Выдает случайного персонажа, обращаясь к базе данных API
 
-class RandomChar extends Component {
-    constructor(props) {
-        super(props);
-        this.updateChar();
-    }
-     
+class RandomChar extends Component {   
     state = {
         char: {},
         loading: true,
@@ -23,6 +18,11 @@ class RandomChar extends Component {
 
     // новое свойство marvelService внутри class RandomChar. Альтернативный синтаксис ПОЛЕЙ КЛАССОВ
     marvelService = new MarvelService();
+    
+
+    componentDidMount() {
+        this.updateChar();
+    }
 
 
 
