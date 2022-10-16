@@ -10,16 +10,15 @@ class MarvelService {
         if (!res.ok) {
             throw new Error(`Could not fetch ${url}, status: ${res.status}`);
         }
-
         return await res.json();
     }
 
-    getAllCharacters = () => {
-        const res =  this.getResource(`${this._apiBase}characters?limit=9&offset=210&${this._apiKey}`);
+    // функция выдает объект с 9 персонажами, в правильном формате.
+    getAllCharacters = async () => {
+        const res = await this.getResource(`${this._apiBase}characters?limit=9&offset=210&${this._apiKey}`);
         // Возвращаем новый объект со списком персонажей в нужном формате данных
         return res.data.results.map(this._transformCharacter);
     }
-
 
     //Асинхронно. Запрашиваем данные с сервера, ЖДЕМ ответа, сохраняем в res
     getCharacter = async (id) => {
