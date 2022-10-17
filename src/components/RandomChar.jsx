@@ -30,6 +30,12 @@ class RandomChar extends Component {
         })
     }
 
+    onCharLoading = () =>  {
+        this.setState({
+            loading: true
+        })
+    }
+
     onError = () => {
         this.setState({
             loading: false,
@@ -40,7 +46,8 @@ class RandomChar extends Component {
     // новый метод обращения к серверу, берем данный и записываем в State
     updateChar = () => {
         // Формула получения слачайного числа из диапазона чисел. (Math.random() * (МаксЧ - МинЧ) + МинЧ)
-        const id = Math.floor(Math.random() * (1011400 - 1011000) + 1011000); 
+        const id = Math.floor(Math.random() * (1011400 - 1011000) + 1011000);
+        this.onCharLoading();
         this.marvelService
             .getCharacter(id)
             .then(this.onCharLoaded)

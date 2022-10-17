@@ -6,9 +6,6 @@ import MarvelService from '../services/MarvelService';
 import Spinner from './Spinner';
 import ErrorMessage from './ErrorMessage';
 
-import abyss from '../resources/img/abyss.jpg';
-
-
 
 class CharList extends Component {
     state = {
@@ -50,9 +47,12 @@ class CharList extends Component {
             }
 
             return (
-                <li className="char__item" key={item.id}> 
-                    <img src={item.thumbnail} alt={item.name} style={imgStyle}/>
-                    <div className="char__name">{item.name}</div>
+                <li 
+                    className="char__item" 
+                    key={item.id}
+                    onClick={() => this.props.onCharSelected(item.id)}> 
+                        <img src={item.thumbnail} alt={item.name} style={imgStyle}/>
+                        <div className="char__name">{item.name}</div>
                 </li>
             )
         });
