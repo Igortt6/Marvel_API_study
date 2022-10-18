@@ -1,6 +1,8 @@
+// Компонент получает ID персонажа из CharList. Получает доп данные с API о выбраном персонаже, рендерит комиксы с ним.
+
 import { Component } from 'react';
 
-import Skeleton from './Skeleton';
+import Skeleton from './Skeleton.jsx';
 import MarvelService from '../services/MarvelService';
 import Spinner from './Spinner';
 import ErrorMessage from './ErrorMessage';
@@ -9,7 +11,7 @@ import thor from '../resources/img/thor.jpeg';
 
 class CharInfo extends Component {
     state = {
-        char: {},
+        char: null,
         loading: false,
         error: false
     }
@@ -20,8 +22,10 @@ class CharInfo extends Component {
         this.updateChar();
     }
 
+
     updateChar = () => {
         const {charId} = this.props;
+        // Если Id есть в props, ничего не делать. 
         if (!charId) { 
             return;
         }
@@ -41,6 +45,7 @@ class CharInfo extends Component {
         })
     }
 
+
     onCharLoading = () =>  {
         this.setState({
             loading: true
@@ -56,13 +61,15 @@ class CharInfo extends Component {
     render() {
         const {char, loading, error} =this.state
 
+
+        // Проверка на отображение Скелетона или спинера, ошибки, данных
         const skeleton =  char || loading || error ? null : <Skeleton/>
         const errorMessage = error ? <ErrorMessage/> : null;
         const spinner = loading ? <Spinner/> : null;
         const content = !(loading || error || !char) ? <View char={char}/> : null;
 
         return (
-            <div className="char__info">\
+            <div className="char__info">
                 {skeleton}
                 {errorMessage}
                 {spinner}

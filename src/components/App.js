@@ -9,7 +9,7 @@ import decoration from '../resources/img/vision.png';
 
 class App extends Component {
     state = { 
-        selectedChar: null
+        selectedChar: null  //id персонажа, для отображения комиксов в CharInfo
     }
 
     // метод устанавливает state selectedChar через аргумент id. (Подъем состояния с другого компонента)

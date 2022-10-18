@@ -1,4 +1,4 @@
-
+// Компонент получает данный c API,  рендерит 9 карточек персонажей
 import { Component } from 'react';
 
 import './charListStyle.scss';
@@ -50,7 +50,7 @@ class CharList extends Component {
                 <li 
                     className="char__item" 
                     key={item.id}
-                    onClick={() => this.props.onCharSelected(item.id)}> 
+                    onClick={() => this.props.onCharSelected(item.id)}>  {/*получаем id и записываем в state. Метод находиться в App.js*/}
                         <img src={item.thumbnail} alt={item.name} style={imgStyle}/>
                         <div className="char__name">{item.name}</div>
                 </li>
