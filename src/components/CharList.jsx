@@ -1,5 +1,5 @@
 // Компонент получает данный c API,  рендерит 9 карточек персонажей
-import { Component } from 'react';
+import React, { Component } from 'react';
 
 import './charListStyle.scss';
 import MarvelService from '../services/MarvelService';
@@ -8,28 +8,54 @@ import ErrorMessage from './ErrorMessage';
 
 
 class CharList extends Component {
+
     state = {
         charList: [],
         loading: true,
-        error: false
+        error: false,
+        newItemLoading: false,
+        offset: 1548,
+        charEnded: false
     }
 
     // новое свойство marvelService внутри class CharList. Альтернативный синтаксис ПОЛЕЙ КЛАССОВ
     marvelService = new MarvelService();
 
     // После монтирования, вызываем метод getAllCharacters() из компонента MarvelService. Передаем данные в новый метод onCharsListLoaded()
+    // Вызываем все выше в методе onRequest без аргумента(подставиться базовый в MarvelService)
     componentDidMount() {
-        this.marvelService.getAllCharacters()
+        this.onRequest();
+    }
+
+    onRequest = (offset) => {
+        this.onCharsListLoading();
+        this.marvelService.getAllCharacters(offset)
         .then(this.onCharsListLoaded)
         .catch(this.onError)
     }
 
+    onCharsListLoading = () => {
+       this.setState({
+            newItemLoading: true
+       }) 
+    }
+
+
     // Пролучаем данные (объект с персонажами) и записываем в компонент CharList.state
-    onCharsListLoaded = (charList) => {
-        this.setState({
-            charList,
-            loading: false
-        })
+    onCharsListLoaded = (newCharList) => {
+        let ended = false;
+        if (newCharList.length < 9) {
+            ended = true;
+        }
+
+
+        this.setState(({offset, charList}) => ({ //Синтаксис кол бек функции, которая возвращает объект
+            charList: [...charList, ...newCharList],
+            loading: false,
+            newItemLoading: false,
+            offset: offset + 9,
+            charEnded: ended
+        }))
     }
 
     onError = () => {
@@ -39,8 +65,27 @@ class CharList extends Component {
         })
     }
 
+    itemRefs = [];
+
+    setRef = (ref) => {
+        this.itemRefs.push(ref);
+    }
+
+    focusOnItem = (id) => {
+        // Я реализовал вариант чуть сложнее, и с классом и с фокусом
+        // Но в теории можно оставить только фокус, и его в стилях использовать вместо класса
+        // На самом деле, решение с css-классом можно сделать, вынеся персонажа
+        // в отдельный компонент. Но кода будет больше, появится новое состояние
+        // и не факт, что мы выиграем по оптимизации за счет бОльшего кол-ва элементов
+
+        // По возможности, не злоупотребляйте рефами, только в крайних случаях
+        this.itemRefs.forEach(item => item.classList.remove('char__item_selected'));
+        this.itemRefs[id].classList.add('char__item_selected');
+        this.itemRefs[id].focus();
+    }
+
     renderItems(arr) {
-        const items =  arr.map((item) => {
+        const items =  arr.map((item, i) => {
             let imgStyle = {'objectFit' : 'cover'};
             if (item.thumbnail === 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg') {
                 imgStyle = {'objectFit' : 'fill'};
@@ -48,9 +93,22 @@ class CharList extends Component {
 
             return (
                 <li 
-                    className="char__item" 
+                    className="char__item"
+                    tabIndex={0}
+                    ref={this.setRef} 
                     key={item.id}
-                    onClick={() => this.props.onCharSelected(item.id)}>  {/*получаем id и записываем в state. Метод находиться в App.js*/}
+                    onClick={
+                        () => {
+                            this.props.onCharSelected(item.id)
+                            this.focusOnItem(i);
+                        }}
+                        onKeyPress={(e) => {
+                            if (e.key === ' ' || e.key === "Enter") {
+                                this.props.onCharSelected(item.id);
+                                this.focusOnItem(i);
+                            }
+                        }}
+                        >  {/*получаем id и записываем в state. Метод находиться в App.js*/}
                         <img src={item.thumbnail} alt={item.name} style={imgStyle}/>
                         <div className="char__name">{item.name}</div>
                 </li>
@@ -65,7 +123,7 @@ class CharList extends Component {
 
 
     render () {
-        const {charList,loading, error} = this.state;
+        const {charList,loading, error, newItemLoading, offset, charEnded} = this.state;
 
         const items = this.renderItems(charList);
 
@@ -78,7 +136,10 @@ class CharList extends Component {
                 {errorMessage}
                 {spinner}
                 {content}
-                <button className="button button__main button__long">
+                <button className="button button__main button__long"
+                    disabled={newItemLoading}
+                    onClick={() => this.onRequest(offset)}
+                    style={{'display': charEnded ? 'none' : 'block' }}> {/*Условие, если тру, кнопка неактивна */}
                     <div className="inner">load more</div>
                 </button>
             </div>

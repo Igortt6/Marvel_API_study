@@ -3,6 +3,7 @@
 class MarvelService {
     _apiBase = 'https://gateway.marvel.com:443/v1/public/'
     _apiKey = 'apikey=ce218a4b894b49f63981041598e61335'
+    _baseOffset = 210;
 
     getResource = async (url) => {
         let res = await fetch(url);
@@ -13,9 +14,9 @@ class MarvelService {
         return await res.json();
     }
 
-    // функция выдает объект с 9 персонажами, в правильном формате.
-    getAllCharacters = async () => {
-        const res = await this.getResource(`${this._apiBase}characters?limit=9&offset=210&${this._apiKey}`);
+    // функция выдает объект персонажами, в правильном формате.
+    getAllCharacters = async (offset = this._baseOffset) => { // Синтаксис передачи аргумента. Базовый, если не передали ничего. Если передали - базовый не учитывается
+        const res = await this.getResource(`${this._apiBase}characters?limit=9&offset=${offset}&${this._apiKey}`);
         // Возвращаем новый объект со списком персонажей в нужном формате данных
         return res.data.results.map(this._transformCharacter);
     }
