@@ -19,7 +19,7 @@ class App extends Component {
             selectedChar: id
         })
     }
-
+    // done
     render() {
         return (
             <div className="app">
