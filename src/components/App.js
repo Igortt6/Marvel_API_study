@@ -38,9 +38,11 @@ class App extends Component {
                     </div>
                     <img className="bg-decoration" src={decoration} alt="vision"/>
                 </main> 
+                
             </div>
         )
     }
 }
+
 
 export default App; 
