@@ -1,6 +1,6 @@
 // Компонент получает ID персонажа из CharList. Получает доп данные с API о выбраном персонаже, рендерит комиксы с ним.
 
-import { Component } from 'react';
+import { useState, useEffect} from 'react';
 
 import Skeleton from './Skeleton.jsx';
 import MarvelService from '../services/MarvelService';
@@ -9,80 +9,60 @@ import ErrorMessage from './ErrorMessage';
 import './charInfoStyle.scss';
 
 
-class CharInfo extends Component {
-    state = {
-        char: null,
-        loading: false,
-        error: false
-    }
+const CharInfo = (props) => {
 
-    marvelService = new MarvelService();
+    const [char, setChar] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(false);
 
-    componentDidMount() {
-        this.updateChar();
-    }
+    const marvelService = new MarvelService();
 
-    componentDidUpdate(prevProps) {
-        if (this.props.charId !== prevProps.charId) {
-            this.updateChar();    
-        }
-    }
+    useEffect(() => {
+        updateChar()
+    },[props.charId])
 
-    updateChar = () => {
-        const {charId} = this.props;
+    const updateChar = () => {
+        const {charId} = props;
         // Если Id есть в props, ничего не делать. 
         if (!charId) { 
             return;
         }
-
-        this.onCharLoading();
-
-        this.marvelService
-            .getCharacter(charId)
-            .then(this.onCharLoaded)
-            .catch(this.onError)
+        onCharLoading();
+        marvelService.getCharacter(charId)
+            .then(onCharLoaded)
+            .catch(onError)
     }
 
-    onCharLoaded = (char) => {
-        this.setState({
-            char,
-            loading: false,
-        })
+    const onCharLoaded = (char) => {
+        setChar(char);
+        setLoading(false)
     }
 
 
-    onCharLoading = () =>  {
-        this.setState({
-            loading: true
-        })
+    const onCharLoading = () =>  {
+        setLoading(true)
     }
 
-    onError = () => {
-        this.setState({
-            loading: false,
-            error: true
-        })
+    const onError = () => {
+        setLoading(false);
+        setError(true);
     }
-    render() {
-        const {char, loading, error} =this.state
+    // Проверка на отображение Скелетона или спинера, ошибки, данных
+    const skeleton =  char || loading || error ? null : <Skeleton/>
+    const errorMessage = error ? <ErrorMessage/> : null;
+    const spinner = loading ? <Spinner/> : null;
+    const content = !(loading || error || !char) ? <View char={char}/> : null;
 
-
-        // Проверка на отображение Скелетона или спинера, ошибки, данных
-        const skeleton =  char || loading || error ? null : <Skeleton/>
-        const errorMessage = error ? <ErrorMessage/> : null;
-        const spinner = loading ? <Spinner/> : null;
-        const content = !(loading || error || !char) ? <View char={char}/> : null;
-
-        return (
-            <div className="char__info">
-                {skeleton}
-                {errorMessage}
-                {spinner}
-                {content}
-            </div>
-        )
-    }
+    return (
+        <div className="char__info">
+            {skeleton}
+            {errorMessage}
+            {spinner}
+            {content}
+        </div>
+    )
 }
+
 
 const View = ({char}) => {
     const {name, description, thumbnail, homepage, wiki, comics}  = char
