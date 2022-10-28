@@ -34,7 +34,6 @@ const RandomChar = () => {
     const onError = () => {
             setLoading(false);
             setError(true);
-
     }
 
     // новый метод обращения к серверу, берем данный и записываем в State
@@ -48,9 +47,9 @@ const RandomChar = () => {
             .catch(onError);
     }
 
-        const errorMessage = error ? <ErrorMessage/> : null;
-        const spinner = loading ? <Spinner/> : null;
-        const content = !(loading || error) ? <View char={char}/> : null;
+    const errorMessage = error ? <ErrorMessage/> : null;
+    const spinner = loading ? <Spinner/> : null;
+    const content = !(loading || error) ? <View char={char}/> : null;
 
     return (
         <div className="randomchar">

@@ -7,7 +7,7 @@ import MarvelService from '../services/MarvelService';
 import Spinner from './Spinner';
 import ErrorMessage from './ErrorMessage';
 import './charInfoStyle.scss';
-import thor from '../resources/img/thor.jpeg';
+
 
 class CharInfo extends Component {
     state = {
