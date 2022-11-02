@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 
 import Spinner from './Spinner';
-import MarvelService from '../services/MarvelService';
+import useMarvelService from '../services/MarvelService';
 import ErrorMessage from './ErrorMessage';
 
 import './randomCharStyle.scss';
@@ -11,11 +11,9 @@ import mjolnir from '../resources/img/mjolnir.png';
 
 const RandomChar = () => {   
     const [char, setChar] = useState({});
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(false);
+    const {loading, error, getCharacter} = useMarvelService();
 
     // новое свойство marvelService внутри class RandomChar. Альтернативный синтаксис ПОЛЕЙ КЛАССОВ
-    const marvelService = new MarvelService();
     
     useEffect(() => {
         updateChar()
@@ -24,27 +22,12 @@ const RandomChar = () => {
     // Функция записывает  полученные данный (char), в State (char)
     const onCharLoaded = (char) => {
         setChar(char);
-        setLoading(false);
     }
 
-    const onCharLoading = () =>  {
-        setLoading(true);
-    }
-
-    const onError = () => {
-            setLoading(false);
-            setError(true);
-    }
-
-    // новый метод обращения к серверу, берем данный и записываем в State
     const updateChar = () => {
-        // Формула получения слачайного числа из диапазона чисел. (Math.random() * (МаксЧ - МинЧ) + МинЧ)
         const id = Math.floor(Math.random() * (1011400 - 1011000) + 1011000);
-        onCharLoading();
-        marvelService
-            .getCharacter(id)
+        getCharacter(id)
             .then(onCharLoaded)
-            .catch(onError);
     }
 
     const errorMessage = error ? <ErrorMessage/> : null;

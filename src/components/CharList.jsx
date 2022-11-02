@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 
 import './charListStyle.scss';
-import MarvelService from '../services/MarvelService';
+import useMarvelService from '../services/MarvelService';
 import Spinner from './Spinner';
 import ErrorMessage from './ErrorMessage';
 
@@ -17,7 +17,7 @@ const CharList = (props) => {
     const [ charEnded, setCharEnded] = useState(false);
 
     // новая переменная  marvelService, которая формируеться на основе класса MarvelService. Альтернативный синтаксис ПОЛЕЙ КЛАССОВ
-    const marvelService = new MarvelService();
+    const marvelService = useMarvelService();
 
     // После монтирования, вызываем метод getAllCharacters() из компонента MarvelService. Передаем данные в новый метод onCharsListLoaded()
     // Вызываем все выше в методе onRequest без аргумента(подставиться базовый в MarvelService)
