@@ -1,7 +1,7 @@
 import {useHttp} from '../hooks/http.hooks.js'
 
 const useMarvelService = () => {
-    const {loading, request, error} = useHttp();
+    const {loading, request, error, clearError} = useHttp();
 
     const _apiBase = 'https://gateway.marvel.com:443/v1/public/';
     const _apiKey = 'apikey=ce218a4b894b49f63981041598e61335';
@@ -15,12 +15,20 @@ const useMarvelService = () => {
         // Возвращаем новый объект со списком персонажей в нужном формате данных
         return res.data.results.map(_transformCharacter);
     }
+    const getAllComics  =async (offset = 0) => {
+        const res = await request(`${_apiBase}comics?orderBy=issueNumber&limit=8&offset=${offset}&${_apiKey}`);
+        return res.data.results.map(_transformComics);
+    }
 
     //Асинхронно. Запрашиваем данные с сервера, ЖДЕМ ответа, сохраняем в res
     const getCharacter = async (id) => {
         const res = await request(`${_apiBase}characters/${id}?${_apiKey}`);
         // возвращаем новый объект на основе res
         return _transformCharacter(res.data.results[0]);
+    }
+    const getComics = async (id) => {
+        const res = await request(`${_apiBase}comics/${id}?${_apiKey}`);
+        return _transformComics(res.data.results[0]);
     }
 
     const _transformCharacter = (char) => {
@@ -34,8 +42,18 @@ const useMarvelService = () => {
             comics: char.comics.items
         }
     }
-
-    return {loading, error, getAllCharacters, getCharacter}
+    const _transformComics = (comics) => {
+        return {
+            id: comics.id,
+            title: comics.title,
+            description: comics.description || 'There is no description',
+            pageCount: comics.pageCount ? `${comics.pageCount} p.` : 'No information about the number of pages',
+            thumbnail: comics.thumbnail.path + '.' + comics.thumbnail.extension,
+            language: comics.textObjects.language || 'en-us',
+            price: comics.prices.price ? `${comics.prices.price}$` : 'not available'
+        }
+    }
+    return {loading, error, getAllCharacters, getCharacter, clearError, getAllComics, getComics}
 }
 
 

@@ -3,7 +3,7 @@
 import { useState, useEffect} from 'react';
 
 import Skeleton from './Skeleton.jsx';
-import MarvelService from '../services/MarvelService';
+import useMarvelService from '../services/MarvelService';
 import Spinner from './Spinner';
 import ErrorMessage from './ErrorMessage';
 import './charInfoStyle.scss';
@@ -12,10 +12,9 @@ import './charInfoStyle.scss';
 const CharInfo = (props) => {
 
     const [char, setChar] = useState(null);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(false);
 
-    const marvelService = new MarvelService();
+
+    const {loading, error, getCharacter, clearError} = useMarvelService();
 
     useEffect(() => {
         updateChar()
@@ -27,26 +26,16 @@ const CharInfo = (props) => {
         if (!charId) { 
             return;
         }
-        onCharLoading();
-        marvelService.getCharacter(charId)
+
+        clearError();
+        getCharacter(charId)
             .then(onCharLoaded)
-            .catch(onError)
     }
 
     const onCharLoaded = (char) => {
         setChar(char);
-        setLoading(false)
     }
 
-
-    const onCharLoading = () =>  {
-        setLoading(true)
-    }
-
-    const onError = () => {
-        setLoading(false);
-        setError(true);
-    }
     // Проверка на отображение Скелетона или спинера, ошибки, данных
     const skeleton =  char || loading || error ? null : <Skeleton/>
     const errorMessage = error ? <ErrorMessage/> : null;

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect} from 'react';
 
 import Spinner from './Spinner';
 import useMarvelService from '../services/MarvelService';
@@ -7,13 +7,9 @@ import ErrorMessage from './ErrorMessage';
 import './randomCharStyle.scss';
 import mjolnir from '../resources/img/mjolnir.png';
 
-// Выдает случайного персонажа, обращаясь к базе данных API
-
-const RandomChar = () => {   
+const RandomChar = () => {  
     const [char, setChar] = useState({});
-    const {loading, error, getCharacter} = useMarvelService();
-
-    // новое свойство marvelService внутри class RandomChar. Альтернативный синтаксис ПОЛЕЙ КЛАССОВ
+    const {loading, error, getCharacter, clearError} = useMarvelService();
     
     useEffect(() => {
         updateChar()
@@ -25,6 +21,7 @@ const RandomChar = () => {
     }
 
     const updateChar = () => {
+        clearError();
         const id = Math.floor(Math.random() * (1011400 - 1011000) + 1011000);
         getCharacter(id)
             .then(onCharLoaded)
@@ -32,7 +29,7 @@ const RandomChar = () => {
 
     const errorMessage = error ? <ErrorMessage/> : null;
     const spinner = loading ? <Spinner/> : null;
-    const content = !(loading || error) ? <View char={char}/> : null;
+    const content = !(loading || error || !char) ? <View char={char}/> : null;
 
     return (
         <div className="randomchar">

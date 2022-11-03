@@ -10,33 +10,22 @@ import ErrorMessage from './ErrorMessage';
 
 const CharList = (props) => {
     const [ charList, setCharList] = useState([]);
-    const [ loading, setLoading] = useState(true);
-    const [ error, setError] = useState(false);
     const [ newItemLoading, setNewItemLoading] = useState(false);
-    const [ offset, setOffset] = useState(1548);
+    const [ offset, setOffset] = useState(210);
     const [ charEnded, setCharEnded] = useState(false);
 
-    // новая переменная  marvelService, которая формируеться на основе класса MarvelService. Альтернативный синтаксис ПОЛЕЙ КЛАССОВ
-    const marvelService = useMarvelService();
-
-    // После монтирования, вызываем метод getAllCharacters() из компонента MarvelService. Передаем данные в новый метод onCharsListLoaded()
-    // Вызываем все выше в методе onRequest без аргумента(подставиться базовый в MarvelService)
+    const {loading, error, getAllCharacters} = useMarvelService();
 
     useEffect(() => {
-        onRequest();
+        onRequest(offset, true);
     }, [])
 
-    const onRequest = (offset) => {
-        onCharsListLoading();
-        marvelService.getAllCharacters(offset)
+    const onRequest = (offset, initial) => {
+
+        initial ? setNewItemLoading(false) : setNewItemLoading(true);
+        getAllCharacters(offset)
             .then(onCharsListLoaded)
-            .catch(onError)
     }
-
-    const onCharsListLoading = () => {
-        setNewItemLoading(true);
-    }
-
 
     // Пролучаем данные (объект с персонажами) и записываем в компонент CharList.state
     const onCharsListLoaded = (newCharList) => {
@@ -46,16 +35,9 @@ const CharList = (props) => {
         }
 
         setCharList(charList => [...charList, ...newCharList]);
-        setLoading(loading => false);
         setNewItemLoading(newItemLoading => false);
         setOffset(offset =>  offset + 9);
         setCharEnded(charEnded => ended);
-
-    }
-
-    const onError = () => {
-        setError(true);
-        setLoading(loading => false);
     }
 
     const itemRefs = useRef([]);
@@ -72,7 +54,6 @@ const CharList = (props) => {
             if (item.thumbnail === 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg') {
                 imgStyle = {'objectFit' : 'fill'};
             }
-
             return (
                 <li 
                     className="char__item"
@@ -105,14 +86,13 @@ const CharList = (props) => {
     const items = renderItems(charList);
 
     const errorMessage = error ? <ErrorMessage/> : null;
-    const spinner = loading ? <Spinner/> : null;
-    const content = !(loading || error) ? items : null;
+    const spinner = loading && !newItemLoading ? <Spinner/> : null;
 
     return (
         <div className="char__list">
             {errorMessage}
             {spinner}
-            {content}
+            {items}
             <button className="button button__main button__long"
                 disabled={newItemLoading}
                 onClick={() => onRequest(offset)}

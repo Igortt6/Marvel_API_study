@@ -25,7 +25,7 @@ export const useHttp = () => {
         // блок catch возвращает e(приходит от браузера) если была ошибка в try
         } catch (e) {
             setLoading(false);
-            setError(e.massage);
+            setError(e.message);
             throw e;
         }
     }, [])

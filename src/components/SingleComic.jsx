@@ -1,5 +1,6 @@
-import './singleComic.scss';
+import './singleComicStyle.scss';
 import xMen from '../resources/img/x-men.png';
+import AppBanner from './AppBanner'
 
 const SingleComic = () => {
     return (
