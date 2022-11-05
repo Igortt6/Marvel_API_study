@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { BrowserRouter as Router, Route } from "react-router-dom";
 
 import AppHeader from "./AppHeader";
 import RandomChar from "./RandomChar";
@@ -22,29 +23,32 @@ const App = () => {
     }
 
     return (
-        <div className="app">
-            <AppHeader/>
-            <AppBanner/>
-
-            <main>
-                <ComicsList/>
-                {/* <SingleComic/> */}
-
-                {/* <ErrorBoundary>
-                    <RandomChar/>
-                </ErrorBoundary>
-                <div className="char__content">
-                    <ErrorBoundary>
-                        <CharList onCharSelected={onCharSelected}/>
-                    </ErrorBoundary>
-                    <ErrorBoundary>
-                        <CharInfo charId={selectedChar}/>
-                    </ErrorBoundary>
-                </div>
-                <img className="bg-decoration" src={decoration} alt="vision"/> */}
-            </main> 
-            
-        </div>
+        <Router>
+            <div className="app">
+                <AppHeader/>
+                <main>
+                    <Route>
+                        <AppBanner/>
+                        <ComicsList/>
+                    </Route>
+                    {/* <SingleComic/> */}
+                    {/* <Route>
+                        <ErrorBoundary>
+                            <RandomChar/>
+                        </ErrorBoundary>
+                        <div className="char__content">
+                            <ErrorBoundary>
+                                <CharList onCharSelected={onCharSelected}/>
+                            </ErrorBoundary>
+                            <ErrorBoundary>
+                                <CharInfo charId={selectedChar}/>
+                            </ErrorBoundary>
+                        </div>
+                        <img className="bg-decoration" src={decoration} alt="vision"/>
+                    </Route> */}
+                </main> 
+            </div>
+        </Router>
     )
 }
 
