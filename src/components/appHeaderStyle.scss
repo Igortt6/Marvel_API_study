@@ -4,6 +4,8 @@
     &__header {
         display: flex;
         justify-content: space-between;
+
+        
     }
     &__title {
         font-weight: bold;
@@ -14,6 +16,9 @@
         }
     }
     &__menu {
+        &__active {
+            color: #9F0013;
+        }
         ul {
             display: flex;
             justify-content: space-between;
