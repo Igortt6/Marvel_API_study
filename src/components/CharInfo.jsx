@@ -94,6 +94,6 @@ const View = ({char}) => {
             </ul>
         </>
     ) 
-}
+} 
 
 export default CharInfo;

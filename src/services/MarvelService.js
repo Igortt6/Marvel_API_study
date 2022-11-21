@@ -8,6 +8,11 @@ const useMarvelService = () => {
     const _baseOffset = 210;
 
 
+    // отдельный метод для поиска по имени
+    const getCharacterByName = async (name) => {
+    const res = await request(`${_apiBase}characters?name=${name}&${_apiKey}`);
+    return res.data.results.map(_transformCharacter);
+    }
 
     // функция выдает объект персонажами, в правильном формате.
     const getAllCharacters = async (offset = _baseOffset) => { // Синтаксис передачи аргумента. Базовый, если не передали ничего. Если передали - базовый не учитывается
@@ -53,7 +58,7 @@ const useMarvelService = () => {
             price: comics.prices.price ? `${comics.prices.price}$` : 'not available'
         }
     }
-    return {loading, error, getAllCharacters, getCharacter, clearError, getAllComics, getComics}
+    return {loading, error, getAllCharacters, getCharacter, clearError, getAllComics, getComics, getCharacterByName}
 }
 
 
