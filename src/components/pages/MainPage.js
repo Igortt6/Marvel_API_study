@@ -3,6 +3,7 @@ import CharList from "../CharList";
 import CharInfo from "../CharInfo";
 import ErrorBoundary from "../ErrorBoundary";
 import CharSearchForm from "../CharSearchForm";
+import { Helmet } from "react-helmet";
 
 import { useState } from "react";
 
@@ -19,6 +20,13 @@ const MainPage = () => {
 
     return (
         <>
+            <Helmet>
+                <meta
+                    name="description"
+                    content="Marvel information portal"
+                    />
+                <title>Marvel information portal</title>
+            </Helmet>
             <ErrorBoundary>
                 <RandomChar/>
             </ErrorBoundary>
