@@ -1,13 +1,12 @@
 import { useState, useCallback } from "react";
 
 export const useHttp = () => {
-    const [ loading, setLoading] = useState(false);
-    const [ error, setError] = useState(null);
+    const [process, setProcess] = useState('waiting');
 
     // Функция с запросом на сервер. Возвращает данные, или ошибку.
     const request = useCallback(async (url, method = 'GET', body = null, headers = {'Content-Type': 'applycation/json'}) => {
 
-        setLoading(true);
+        setProcess('loading');
 
         // блок try возварщает const data с json ответом от сервера
         try {
@@ -18,20 +17,20 @@ export const useHttp = () => {
             }
 
             const data = await response.json();
-            setLoading(false);
             return data;
 
         
         // блок catch возвращает e(приходит от браузера) если была ошибка в try
         } catch (e) {
-            setLoading(false);
-            setError(e.message);
+            setProcess('error')
             throw e;
         }
     }, [])
 
     // функция чистит сообщение об ошибке
-    const clearError = useCallback(() => setError(null), []);
+    const clearError = useCallback(() => {
+        setProcess('loading');
+    }, []);
 
-    return {loading, request, error, clearError}
+    return {request, clearError, process, setProcess}
 }

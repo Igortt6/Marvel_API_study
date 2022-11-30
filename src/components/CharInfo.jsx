@@ -1,11 +1,10 @@
 // Компонент получает ID персонажа из CharList. Получает доп данные с API о выбраном персонаже, рендерит комиксы с ним.
-
 import { useState, useEffect} from 'react';
+import PropTypes from 'prop-types'
 
-import Skeleton from './Skeleton.jsx';
 import useMarvelService from '../services/MarvelService';
-import Spinner from './Spinner';
-import ErrorMessage from './ErrorMessage';
+import setContent from '../utils/setContent.js';
+
 import './charInfoStyle.scss';
 
 
@@ -14,11 +13,12 @@ const CharInfo = (props) => {
     const [char, setChar] = useState(null);
 
 
-    const {loading, error, getCharacter, clearError} = useMarvelService();
+    const {getCharacter, clearError, process, setProcess} = useMarvelService();
 
     useEffect(() => {
         updateChar()
-    },[props.charId])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [props.charId])
 
     const updateChar = () => {
         const {charId} = props;
@@ -30,31 +30,24 @@ const CharInfo = (props) => {
         clearError();
         getCharacter(charId)
             .then(onCharLoaded)
+            // Вручную устанавливаем 'confirmed' (рендерим контент), когда данные загружены и переданы в текущий State 
+            .then(() => setProcess('confirmed'))
     }
 
     const onCharLoaded = (char) => {
         setChar(char);
     }
 
-    // Проверка на отображение Скелетона или спинера, ошибки, данных
-    const skeleton =  char || loading || error ? null : <Skeleton/>
-    const errorMessage = error ? <ErrorMessage/> : null;
-    const spinner = loading ? <Spinner/> : null;
-    const content = !(loading || error || !char) ? <View char={char}/> : null;
-
     return (
         <div className="char__info">
-            {skeleton}
-            {errorMessage}
-            {spinner}
-            {content}
+            {setContent(process, View, char)}
         </div>
     )
 }
 
 
-const View = ({char}) => {
-    const {name, description, thumbnail, homepage, wiki, comics}  = char
+const View = ({data}) => {
+    const {name, description, thumbnail, homepage, wiki, comics}  = data
     let imgStyle = {'objectFit' : 'cover'};
     if (thumbnail === 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg') {
         imgStyle = {'objectFit' : 'fill'};
@@ -95,5 +88,9 @@ const View = ({char}) => {
         </>
     ) 
 } 
+
+CharInfo.propTypes = {
+    charId: PropTypes.number
+}
 
 export default CharInfo;
