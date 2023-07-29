@@ -12,27 +12,27 @@ import './charListStyle.scss';
 const setContent = (process, Component, newItemLoading) => {
     switch (process) {
         case 'waiting':
-            return <Spinner/>;
+            return <Spinner />;
         case 'loading':
             // грузятци новые компоненты ? рендерим компонент(ничего не меняем) : рендерим спинер загрузки
-            return newItemLoading ? <Component/> : <Spinner/>;
+            return newItemLoading ? <Component /> : <Spinner />;
         case 'confirmed':
-            return <Component/>;
+            return <Component />;
         case 'error':
-            return <ErrorMessage/>;
-        default: 
+            return <ErrorMessage />;
+        default:
             throw new Error('Unexpected process state');
     }
-} 
+}
 
 
 const CharList = (props) => {
-    const [ charList, setCharList] = useState([]);
-    const [ newItemLoading, setNewItemLoading] = useState(false);
-    const [ offset, setOffset] = useState(210);
-    const [ charEnded, setCharEnded] = useState(false);
+    const [charList, setCharList] = useState([]);
+    const [newItemLoading, setNewItemLoading] = useState(false);
+    const [offset, setOffset] = useState(210);
+    const [charEnded, setCharEnded] = useState(false);
 
-    const {loading, error, getAllCharacters, process, setProcess} = useMarvelService();
+    const { getAllCharacters, process, setProcess } = useMarvelService();
 
     useEffect(() => {
         onRequest(offset, true);
@@ -55,7 +55,7 @@ const CharList = (props) => {
 
         setCharList(charList => [...charList, ...newCharList]);
         setNewItemLoading(newItemLoading => false);
-        setOffset(offset =>  offset + 9);
+        setOffset(offset => offset + 9);
         setCharEnded(charEnded => ended);
     }
 
@@ -68,30 +68,30 @@ const CharList = (props) => {
     }
 
     function renderItems(arr) {
-        const items =  arr.map((item, i) => {
-            let imgStyle = {'objectFit' : 'cover'};
+        const items = arr.map((item, i) => {
+            let imgStyle = { 'objectFit': 'cover' };
             if (item.thumbnail === 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg') {
-                imgStyle = {'objectFit' : 'fill'};
+                imgStyle = { 'objectFit': 'fill' };
             }
             return (
-                <li 
+                <li
                     className="char__item"
                     tabIndex={0}
-                    ref={el => itemRefs.current[i] = el} 
+                    ref={el => itemRefs.current[i] = el}
                     key={item.id}
                     onClick={() => {
-                            props.onCharSelected(item.id)
+                        props.onCharSelected(item.id)
+                        focusOnItem(i);
+                    }}
+                    onKeyPress={(e) => {
+                        if (e.key === ' ' || e.key === "Enter") {
+                            props.onCharSelected(item.id);
                             focusOnItem(i);
-                        }}
-                        onKeyPress={(e) => {
-                            if (e.key === ' ' || e.key === "Enter") {
-                                props.onCharSelected(item.id);
-                                focusOnItem(i);
-                            }
-                        }}
-                        >  {/*получаем id и записываем в state. Метод находиться в App.js*/}
-                        <img src={item.thumbnail} alt={item.name} style={imgStyle}/>
-                        <div className="char__name">{item.name}</div>
+                        }
+                    }}
+                >  {/*получаем id и записываем в state. Метод находиться в App.js*/}
+                    <img src={item.thumbnail} alt={item.name} style={imgStyle} />
+                    <div className="char__name">{item.name}</div>
                 </li>
             )
         });
@@ -108,7 +108,7 @@ const CharList = (props) => {
             <button className="button button__main button__long"
                 disabled={newItemLoading}
                 onClick={() => onRequest(offset)}
-                style={{'display': charEnded ? 'none' : 'block' }}> {/*Условие, если тру, кнопка неактивна */}
+                style={{ 'display': charEnded ? 'none' : 'block' }}> {/*Условие, если тру, кнопка неактивна */}
                 <div className="inner">load more</div>
             </button>
         </div>
@@ -119,5 +119,5 @@ const CharList = (props) => {
 CharList.propTypes = {
     onCharSelected: PropTypes.func.isRequired
 }
- 
+
 export default CharList;
