@@ -1,6 +1,6 @@
 Навчальний React app. API Marvel. Реальна БД
 
-Полный курс по JavaScript + React - с нуля до результата. Раздел 6. Проект REACT 1
+Полный курс по JavaScript + React - с нуля до результата. Раздел 6. REACT 2 проект. Основний
 
 
 https://www.udemy.com/course/javascript_full/learn/lecture/28613730#search
